@@ -1,889 +1,450 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Saywrego's Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sarpanch&display=swap" rel="stylesheet" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Worstlow's Portfolio</title>
 
-  <style>
-    :root {
-      --thumb-size: 180px;
-      --primary-dark: #cd5c5c;
-      --primary-light: #33a3a3;
-      --bg-dark: #141414;
-      --bg-light: #f0f0f0;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Sarpanch&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="UIDesigns/myuis.png">
+<link rel="preload" as="image" href="Scripts/myscripts.png">
+<link rel="preload" as="image" href="Models/modelbutton.png">
 
-    body {
-      font-family: 'Sarpanch', Arial, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      background-color: var(--bg-dark);
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      transition: background-color 0.4s, color 0.4s;
-      overflow-x: hidden;
-      position: relative;
-    }
-    body.light-mode {
-      background-color: var(--bg-light);
-      color: #141414;
-    }
-    
-    #pattern-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        opacity: 0.2;
-        transition: background-color 0.4s;
-        
-        background-color: #0c0c0c; 
-        background-image: url('Models/hexapattern.png');
-        background-repeat: repeat;
-        background-size: 80px 138.56px;
-        
-        mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-        -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-    }
+<style>
+:root {
+--thumb-size:180px;
+--primary-dark:#cd5c5c;
+--primary-light:#33a3a3;
+--bg-dark:#141414;
+--bg-light:#f0f0f0;
+}
 
-    body.light-mode #pattern-overlay {
-        background-color: #e0e0e0;
-    }
+body {
+font-family:'Sarpanch',Arial,sans-serif;
+margin:0;
+min-height:100vh;
+background-color:var(--bg-dark);
+color:#fff;
+display:flex;
+flex-direction:column;
+transition:background-color .4s,color .4s;
+overflow-x:hidden;
+}
 
-    #loader {
-      position: fixed;
-      inset: 0;
-      background-color: var(--bg-dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      transition: opacity 0.5s ease;
-    }
-    .loader-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-    .loader-logo {
-      font-size: 3.5rem;
-      font-weight: 900;
-      color: var(--primary-dark);
-      animation: spinPulse 2.5s infinite ease-in-out;
-      text-shadow: 0 0 15px var(--primary-dark), 0 0 30px var(--primary-dark);
-    }
-    .loader-line {
-      height: 4px;
-      background-color: var(--primary-dark);
-      border-radius: 2px;
-      opacity: 0;
-      transform: scaleX(0);
-      animation: growLine 1.5s forwards;
-    }
-    .loader-line.top { width: 80px; animation-delay: 0.2s; transform-origin: right; }
-    .loader-line.bottom { width: 80px; animation-delay: 0.6s; transform-origin: left; }
-    
-    @keyframes spinPulse {
-      0% { transform: scale(1) rotate(0deg); }
-      50% { transform: scale(1.2) rotate(3deg); }
-      100% { transform: scale(1) rotate(0deg); }
-    }
-    @keyframes growLine { to { opacity: 1; transform: scaleX(1); } }
+body.light-mode {
+background-color:var(--bg-light);
+color:#141414;
+}
 
-    body.light-mode #loader { background-color: var(--bg-light); }
-    body.light-mode .loader-logo { color: var(--primary-light); text-shadow: 0 0 15px var(--primary-light), 0 0 30px var(--primary-light); }
-    body.light-mode .loader-line { background-color: var(--primary-light); }
+#pattern-overlay {
+position:fixed;
+inset:0;
+z-index:-1;
+opacity:.2;
+background-color:#0c0c0c;
+background-image:url('Models/hexapattern.png');
+background-repeat:repeat;
+background-size:80px 138.56px;
+mask-image:linear-gradient(to right,#000 0%,transparent 100%);
+-webkit-mask-image:linear-gradient(to right,#000 0%,transparent 100%);
+}
 
-    /* --- Password/Dev Mode Styles --- */
-    .top-right-controls {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        z-index: 1000;
-        display: flex;
-        gap: 10px;
-    }
-    
-    #passwordToggle, #modeToggle {
-      cursor: pointer;
-      font-weight: bold;
-      padding: 8px 14px;
-      border-radius: 20px;
-      color: #f0f0f0;
-      background-color: var(--primary-dark);
-      box-shadow: 0 0 10px var(--primary-dark);
-      transition: 0.3s;
-      white-space: nowrap;
-    }
-    #modeToggle:hover, #passwordToggle:hover {
-        transform: scale(1.05);
-    }
-    body.light-mode #modeToggle, body.light-mode #passwordToggle {
-      background-color: #555;
-      color: #ddd;
-      box-shadow: 0 0 10px #555;
-    }
+body.light-mode #pattern-overlay {
+background-color:#e0e0e0;
+}
 
-    /* Dev Menu Dropdown */
-    .dev-menu-container {
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: translateY(calc(100% + 10px));
-        display: none;
-        flex-direction: column;
-        background-color: #1a1a1a;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        min-width: 150px;
-        overflow: hidden;
-    }
-    body.light-mode .dev-menu-container {
-        background-color: #ddd;
-    }
-    .dev-menu-item {
-        padding: 10px 15px;
-        cursor: pointer;
-        color: #fff;
-        transition: background-color 0.2s;
-    }
-    .dev-menu-item:hover {
-        background-color: var(--primary-dark);
-    }
-    body.light-mode .dev-menu-item {
-        color: #141414;
-    }
-    body.light-mode .dev-menu-item:hover {
-        background-color: var(--primary-light);
-        color: #fff;
-    }
-    /* Password Modal */
-    #password-modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 5000;
-    }
-    .modal-content {
-        background: #1a1a1a;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(205, 92, 92, 0.7);
-        text-align: center;
-    }
-    .modal-content h3 {
-        margin-top: 0;
-        color: var(--primary-dark);
-    }
-    .modal-content input {
-        padding: 10px;
-        border: 1px solid #555;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        width: 200px;
-        background: #333;
-        color: #fff;
-    }
-    .modal-content button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        background: var(--primary-dark);
-        color: white;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    .modal-content button:hover {
-        background: #e36a6a;
-    }
-    body.light-mode .modal-content {
-        background: #ddd;
-        box-shadow: 0 0 20px rgba(51, 163, 163, 0.7);
-    }
-    body.light-mode .modal-content h3 {
-        color: var(--primary-light);
-    }
-    body.light-mode .modal-content input {
-        background: #fff;
-        color: #141414;
-        border: 1px solid #aaa;
-    }
-    body.light-mode .modal-content button {
-        background: var(--primary-light);
-    }
-    body.light-mode .modal-content button:hover {
-        background: #4ab7b7;
-    }
-    /* --- End Password/Dev Mode Styles --- */
+#loader {
+position:fixed;
+inset:0;
+background-color:var(--bg-dark);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:2000;
+transition:opacity .4s ease;
+}
 
+.loader-container {
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:20px;
+}
 
-    .title-container {
-      padding: 20px 0 15px;
-      text-align: center;
-      background-color: #1a1a1a;
-      box-shadow: 0 0 15px var(--primary-dark);
-      position: relative;
-      transition: background-color 0.4s, box-shadow 0.4s;
-      z-index: 100;
-    }
-    body.light-mode .title-container {
-      background-color: #ddd;
-      box-shadow: 0 0 15px var(--primary-light);
-    }
-    .title {
-      font-size: 2.5rem;
-      margin: 0;
-      text-shadow: 0 0 10px var(--primary-dark);
-      transition: text-shadow 0.4s;
-    }
-    body.light-mode .title { text-shadow: 0 0 10px var(--primary-light); }
-    .title::after {
-      content: '';
-      display: block;
-      margin: 8px auto 0;
-      height: 3px;
-      width: 80%;
-      background: var(--primary-dark);
-      animation: shine 2s infinite;
-    }
-    body.light-mode .title::after { background: var(--primary-light); }
-    @keyframes shine {
-      0%,100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
+.loader-logo {
+font-size:3.5rem;
+font-weight:900;
+color:var(--primary-dark);
+animation:spinPulse 2.5s infinite ease-in-out;
+text-shadow:0 0 15px var(--primary-dark),0 0 30px var(--primary-dark);
+}
 
-    .social-wrapper {
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-    }
-    .contact-label {
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: var(--primary-dark);
-      margin-left: 2px;
-      text-shadow: 0 0 5px rgba(205, 92, 92, 0.5);
-    }
-    body.light-mode .contact-label { color: var(--primary-light); text-shadow: 0 0 5px rgba(51, 163, 163, 0.5); }
-    
-    .social-buttons {
-      display: flex;
-      gap: 10px;
-    }
-    .social-btn {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      cursor: pointer;
-      background: var(--primary-dark);
-      color: #fff;
-      text-decoration: none;
-      box-shadow: 0 0 8px var(--primary-dark);
-      transition: 0.25s;
-    }
-    .social-btn:hover { transform: scale(1.1); }
-    body.light-mode .social-btn {
-      background: var(--primary-light);
-      box-shadow: 0 0 8px var(--primary-light);
-    }
+.loader-line {
+height:4px;
+width:80px;
+background-color:var(--primary-dark);
+border-radius:2px;
+opacity:0;
+transform:scaleX(0);
+animation:growLine 1.2s forwards;
+}
 
-    .main-content {
-      display: flex;
-      flex-direction: row;
-      padding: 30px;
-      gap: 30px;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-      box-sizing: border-box;
-      align-items: flex-start;
-    }
+.loader-line.bottom {
+animation-delay:.4s;
+}
 
-    .button-column {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      flex-shrink: 0;
-      width: 250px;
-    }
+@keyframes spinPulse {
+0%{transform:scale(1)}
+50%{transform:scale(1.2)}
+100%{transform:scale(1)}
+}
 
-    button.image-button {
-      border: none;
-      background: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.2s;
-      width: 100%;
-    }
-    button.image-button:hover { transform: scale(1.05); }
-    button.image-button img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      border-radius: 8px;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-    
-    .scripts-button-mod {
-      transform: scale(1.1) translateX(10px);
-    }
-    .scripts-button-mod:hover {
-      transform: scale(1.15) translateX(10px);
-    }
+@keyframes growLine {
+to{opacity:1;transform:scaleX(1)}
+}
 
-    .display-column {
-      flex: 1;
-      position: relative;
-    }
+.title-container {
+padding:20px 0 15px;
+text-align:center;
+background-color:#1a1a1a;
+box-shadow:0 0 15px var(--primary-dark);
+position:relative;
+}
 
-    .intro-box {
-      width: 100%;
-      padding: 35px;
-      border-radius: 12px;
-      background-color: #1a1a1a;
-      font-size: 1.25rem;
-      line-height: 1.55;
-      text-align: left;
-      transition: background-color 0.4s;
-      border: 1px solid rgba(255,255,255,0.1);
-      animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-    body.light-mode .intro-box {
-      background-color: #ddd;
-      color: #141414;
-      border: 1px solid rgba(0,0,0,0.1);
-    }
+body.light-mode .title-container {
+background-color:#ddd;
+box-shadow:0 0 15px var(--primary-light);
+}
 
-    .content-box {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 25px;
-      border-radius: 10px;
-      background-color: #1a1a1a;
-      box-shadow: 0 0 10px var(--primary-dark);
-      display: none;
-      overflow-y: visible;
-      transition: background-color 0.4s, box-shadow 0.4s;
-    }
-    
-    .animate-pop {
-      animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
+.title {
+font-size:2.5rem;
+margin:0;
+text-shadow:0 0 10px var(--primary-dark);
+}
 
-    @keyframes popIn {
-      0% { 
-        opacity: 0;
-        transform: scale(0.8) translateY(20px);
-      }
-      100% { 
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
+body.light-mode .title {
+text-shadow:0 0 10px var(--primary-light);
+}
 
-    body.light-mode .content-box {
-      background-color: #ddd;
-      box-shadow: 0 0 10px var(--primary-light);
-      color: #141414;
-    }
+.title::after {
+content:'';
+display:block;
+margin:8px auto 0;
+height:3px;
+width:80%;
+background:var(--primary-dark);
+animation:shine 2s infinite;
+}
 
-    .close-button {
-      float: right;
-      background: none;
-      border: none;
-      color: inherit;
-      font-size: 2rem;
-      line-height: 1rem;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: 0.2s;
-    }
-    .close-button:hover { opacity: 1; transform: scale(1.1); }
+body.light-mode .title::after {
+background:var(--primary-light);
+}
 
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 15px;
-    }
+@keyframes shine {
+0%,100%{opacity:.7}
+50%{opacity:1}
+}
 
-    .img-protect {
-      width: var(--thumb-size);
-      height: var(--thumb-size);
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background: #0f0f0f;
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-      border: 1px solid var(--primary-dark);
-      box-shadow: 0 0 20px var(--primary-dark);
-    }
-    .img-protect:hover {
-      transform: scale(1.06);
-      z-index: 5;
-      box-shadow: 0 8px 22px var(--primary-dark);
-    }
-    body.light-mode .img-protect {
-      background: #eee;
-      border: 1px solid var(--primary-light);
-      box-shadow: 0 0 20px var(--primary-light);
-    }
-    body.light-mode .img-protect:hover {
-      box-shadow: 0 8px 22px var(--primary-light);
-    }
+.social-wrapper {
+position:absolute;
+left:20px;
+top:50%;
+transform:translateY(-50%);
+display:flex;
+flex-direction:column;
+gap:5px;
+}
 
-    .img-protect img,
-    .img-protect video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      user-select: none;
-      display: block;
-    }
+.contact-label {
+font-size:.9rem;
+font-weight:bold;
+color:var(--primary-dark);
+}
 
-    #image-viewer {
-      position: fixed;
-      inset: 0;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0,0,0,0.85);
-      z-index: 3000;
-      padding: 20px;
-    }
-    #image-viewer .viewer-inner {
-      max-width: 92vw;
-      max-height: 92vh;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    #image-viewer img, #image-viewer video {
-      max-width: 100%;
-      max-height: 100%;
-      display: block;
-      border-radius: 8px;
-    }
-    #viewer-close {
-      position: fixed;
-      top: 20px;
-      right: 30px;
-      font-size: 3rem;
-      cursor: pointer;
-      color: white;
-      user-select: none;
-      z-index: 3001;
-    }
+body.light-mode .contact-label {
+color:var(--primary-light);
+}
 
-    @media (max-width: 900px) {
-      .main-content {
-        flex-direction: column;
-        align-items: center;
-      }
-      .title-container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-      .social-wrapper {
-        position: relative;
-        left: auto;
-        top: auto;
-        transform: none;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-      .button-column {
-        width: 100%;
-        flex-direction: row;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      button.image-button {
-        width: 30%;
-        min-width: 120px;
-      }
-      .scripts-button-mod {
-        transform: scale(1.1) translateX(0);
-      }
-      .scripts-button-mod:hover {
-        transform: scale(1.15) translateX(0);
-      }
-      :root { --thumb-size: 140px; }
-    }
+.social-buttons {
+display:flex;
+gap:10px;
+}
 
-    @media (max-width: 600px) {
-      .top-right-controls {
-          gap: 5px;
-          right: 5px;
-      }
-      #passwordToggle, #modeToggle {
-          padding: 6px 10px;
-          font-size: 0.8rem;
-      }
-      :root { --thumb-size: 110px; }
-      .title { font-size: 2rem; }
-      .button-column { gap: 10px; }
-    }
-  </style>
+.social-btn {
+padding:6px 12px;
+border-radius:8px;
+font-size:.85rem;
+font-weight:bold;
+cursor:pointer;
+background:var(--primary-dark);
+color:#fff;
+text-decoration:none;
+box-shadow:0 0 8px var(--primary-dark);
+transition:.25s;
+}
+
+.social-btn:hover {
+transform:scale(1.1);
+}
+
+body.light-mode .social-btn {
+background:var(--primary-light);
+box-shadow:0 0 8px var(--primary-light);
+}
+
+.main-content {
+display:flex;
+gap:30px;
+padding:30px;
+max-width:1400px;
+margin:0 auto;
+width:100%;
+}
+
+.button-column {
+display:flex;
+flex-direction:column;
+gap:20px;
+width:250px;
+}
+
+button.image-button {
+border:none;
+background:none;
+cursor:pointer;
+display:flex;
+flex-direction:column;
+align-items:center;
+transition:transform .15s;
+width:100%;
+}
+
+button.image-button:hover {
+transform:scale(1.05);
+}
+
+button.image-button img {
+width:100%;
+height:auto;
+border-radius:8px;
+object-fit:contain;
+loading:eager;
+}
+
+.scripts-button-mod {
+transform:scale(1.1);
+}
+
+.display-column {
+flex:1;
+}
+
+.intro-box {
+padding:35px;
+border-radius:12px;
+background-color:#1a1a1a;
+font-size:1.25rem;
+animation:popIn .6s cubic-bezier(.175,.885,.32,1.275) forwards;
+}
+
+body.light-mode .intro-box {
+background-color:#ddd;
+color:#141414;
+}
+
+.content-box {
+padding:25px;
+border-radius:10px;
+background-color:#1a1a1a;
+box-shadow:0 0 10px var(--primary-dark);
+display:none;
+}
+
+body.light-mode .content-box {
+background-color:#ddd;
+box-shadow:0 0 10px var(--primary-light);
+color:#141414;
+}
+
+.close-button {
+float:right;
+background:none;
+border:none;
+font-size:2rem;
+cursor:pointer;
+opacity:.7;
+}
+
+.gallery {
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+margin-top:15px;
+}
+
+.img-protect {
+width:var(--thumb-size);
+height:var(--thumb-size);
+display:flex;
+align-items:center;
+justify-content:center;
+background:#0f0f0f;
+border:1px solid var(--primary-dark);
+box-shadow:0 0 12px var(--primary-dark);
+cursor:pointer;
+transition:.18s;
+}
+
+.img-protect:hover {
+transform:scale(1.06);
+}
+
+.img-protect img,
+.img-protect video {
+width:100%;
+height:100%;
+object-fit:contain;
+pointer-events:none;
+}
+
+#image-viewer {
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+background:rgba(0,0,0,.85);
+z-index:3000;
+}
+
+.viewer-inner {
+max-width:92vw;
+max-height:92vh;
+}
+
+#viewer-close {
+position:fixed;
+top:20px;
+right:30px;
+font-size:3rem;
+cursor:pointer;
+color:#fff;
+}
+
+@keyframes popIn {
+0%{opacity:0;transform:scale(.85)}
+100%{opacity:1;transform:scale(1)}
+}
+</style>
 </head>
 
 <body>
-  <div id="pattern-overlay"></div>
+<div id="pattern-overlay"></div>
 
-  <div id="loader">
-    <div class="loader-container">
-      <div class="loader-line top"></div>
-      <div class="loader-logo">W</div>
-      <div class="loader-line bottom"></div>
-    </div>
-  </div>
+<div id="loader">
+<div class="loader-container">
+<div class="loader-line"></div>
+<div class="loader-logo">W</div>
+<div class="loader-line bottom"></div>
+</div>
+</div>
 
-  <div class="top-right-controls">
-    <div id="passwordToggle" onclick="showPasswordModal()">Password</div>
-    <div id="modeToggle">Light Mode</div>
-    <div class="dev-menu-container" id="dev-menu">
-        <div class="dev-menu-item" onclick="document.getElementById('file-upload-models').click();">Add Models</div>
-        <div class="dev-menu-item" onclick="document.getElementById('file-upload-scripts').click();">Add Scripts</div>
-        <div class="dev-menu-item" onclick="document.getElementById('file-upload-ui').click();">Add UI</div>
-    </div>
-  </div>
+<div class="title-container">
+<div class="social-wrapper">
+<div class="contact-label">CONTACT ME!</div>
+<div class="social-buttons">
+<a class="social-btn" href="https://discord.gg/gREGjChBce" target="_blank">Discord</a>
+<a class="social-btn" href="https://www.youtube.com/@worstlow" target="_blank">YouTube</a>
+<a class="social-btn" href="https://x.com/saywrego" target="_blank">Twitter</a>
+</div>
+</div>
+<h1 class="title">Worstlow's Portfolio</h1>
+</div>
 
-  <input type="file" id="file-upload-models" data-category="models" accept="image/*,video/*" multiple style="display: none;" onchange="handleFileUpload(this)">
-  <input type="file" id="file-upload-scripts" data-category="scripts" accept="image/*,video/*" multiple style="display: none;" onchange="handleFileUpload(this)">
-  <input type="file" id="file-upload-ui" data-category="ui" accept="image/*,video/*" multiple style="display: none;" onchange="handleFileUpload(this)">
+<div class="main-content">
+<div class="button-column">
+<button class="image-button" onclick="showContent('ui-content')">
+<img src="UIDesigns/myuis.png">
+</button>
+<button class="image-button scripts-button-mod" onclick="showContent('scripts-content')">
+<img src="Scripts/myscripts.png">
+</button>
+<button class="image-button" onclick="showContent('models-content')">
+<img src="Models/modelbutton.png">
+</button>
+</div>
 
-  <div id="password-modal">
-    <div class="modal-content">
-      <h3>Enter Dev Mode Password</h3>
-      <input type="password" id="password-input" placeholder="Password" onkeydown="if(event.key === 'Enter') checkPassword()">
-      <button onclick="checkPassword()">Enter</button>
-      <p id="password-message" style="color: red; margin-top: 10px;"></p>
-    </div>
-  </div>
+<div class="display-column">
+<div class="intro-box" id="intro-box">
+Hello! I'm saywrego.<br>
+Roblox UI developer, VFX emitter, scripter & modeler.<br><br>
+I specialize in UI coding, transitions, tweens and interface systems.
+</div>
 
-  <div class="title-container">
-    <div class="social-wrapper">
-      <div class="contact-label">CONTACT ME!</div>
-      <div class="social-buttons">
-        <a class="social-btn" href="https://discord.gg/gREGjChBce" target="_blank">Discord</a>
-        <a class="social-btn" href="https://www.youtube.com/@worstlow" target="_blank">YouTube</a>
-        <a class="social-btn" href="https://x.com/saywrego" target="_blank">Twitter</a>
-      </div>
-    </div>
-    <h1 class="title">Worstlow's Portfolio</h1>
-  </div>
+<div class="content-box" id="models-content">
+<button class="close-button" onclick="closeContent()">×</button>
+<h2>My Models</h2>
+<div class="gallery" id="models-gallery"></div>
+</div>
 
-  <div class="main-content">
-    
-    <div class="button-column">
-      <button class="image-button" onclick="showContent('ui-content')" id="ui-button">
-        <img src="UIDesigns/myuis.png" alt="UI Designs" />
-      </button>
-      <button class="image-button scripts-button-mod" onclick="showContent('scripts-content')" id="scripts-button">
-        <img src="Scripts/myscripts.png" alt="Scripts" />
-      </button>
-      <button class="image-button" onclick="showContent('models-content')" id="models-button">
-        <img src="Models/modelbutton.png" alt="Models" />
-      </button>
-    </div>
+<div class="content-box" id="scripts-content">
+<button class="close-button" onclick="closeContent()">×</button>
+<h2>My Scripts</h2>
+<div class="gallery" id="scripts-gallery"></div>
+</div>
 
-    <div class="display-column">
-      
-      <div class="intro-box" id="intro-box">
-        Hello! I'm saywrego. I go by wrego/wre/worstlow or cygnus.<br>
-        I'm a Roblox developer and I can: Create UI, Emit VFX, Code and Model.<br><br>
-        BUT! I have memory problems. I can't code for long. My codes are buggy.<br><br>
-        THAT'S WHY! I specialize on UI Coding instead of Lead Coding.<br>
-        By UI coding, stuff like opening frames / tweening and other more.
-      </div>
+<div class="content-box" id="ui-content">
+<button class="close-button" onclick="closeContent()">×</button>
+<h2>My UI Designs</h2>
+<div class="gallery" id="ui-gallery"></div>
+</div>
+</div>
+</div>
 
-      <div class="content-box" id="models-content">
-        <button class="close-button" onclick="closeContent('models-content')">×</button>
-        <h2>My Models</h2>
-        <div class="gallery" id="models-gallery"></div>
-      </div>
+<div id="image-viewer">
+<div id="viewer-close" onclick="closeViewer()">×</div>
+<div class="viewer-inner" id="viewer-inner"></div>
+</div>
 
-      <div class="content-box" id="scripts-content">
-        <button class="close-button" onclick="closeContent('scripts-content')">×</button>
-        <h2>My Scripts</h2>
-        <div class="gallery" id="scripts-gallery"></div>
-      </div>
+<script>
+function showContent(id){
+document.getElementById('intro-box').style.display='none'
+document.querySelectorAll('.content-box').forEach(b=>b.style.display='none')
+document.getElementById(id).style.display='block'
+}
 
-      <div class="content-box" id="ui-content">
-        <button class="close-button" onclick="closeContent('ui-content')">×</button>
-        <h2>My UI Designs</h2>
-        <div class="gallery" id="ui-gallery"></div>
-      </div>
+function closeContent(){
+document.querySelectorAll('.content-box').forEach(b=>b.style.display='none')
+document.getElementById('intro-box').style.display='block'
+}
 
-    </div>
-  </div>
+function openViewer(src,type){
+const v=document.getElementById('image-viewer')
+const i=document.getElementById('viewer-inner')
+i.innerHTML=''
+if(type==='video'){
+const e=document.createElement('video')
+e.src=src
+e.controls=true
+e.autoplay=true
+i.appendChild(e)
+}else{
+const e=document.createElement('img')
+e.src=src
+i.appendChild(e)
+}
+v.style.display='flex'
+}
 
-  <div id="image-viewer" tabindex="-1" aria-hidden="true">
-    <div id="viewer-close" onclick="closeViewer()">×</div>
-    <div class="viewer-inner" id="viewer-inner"></div>
-  </div>
+function closeViewer(){
+document.getElementById('image-viewer').style.display='none'
+document.getElementById('viewer-inner').innerHTML=''
+}
 
-  <script>
-    const CORRECT_PASSWORD = "wredevmodecygnus";
-    let isDevMode = false;
-
-    function showPasswordModal() {
-        if (isDevMode) {
-            toggleDevMenu();
-            return;
-        }
-        document.getElementById('password-modal').style.display = 'flex';
-        document.getElementById('password-input').focus();
-        document.getElementById('password-message').textContent = '';
-    }
-
-    function checkPassword() {
-        const input = document.getElementById('password-input');
-        const message = document.getElementById('password-message');
-        
-        if (input.value === CORRECT_PASSWORD) {
-            isDevMode = true;
-            document.getElementById('password-modal').style.display = 'none';
-            document.getElementById('passwordToggle').textContent = 'Dev Mode ▼';
-            document.getElementById('dev-menu').style.display = 'flex';
-            input.value = ''; 
-            message.textContent = 'Dev Mode Activated!';
-        } else {
-            message.textContent = 'Incorrect Password.';
-            input.value = '';
-            input.focus();
-        }
-    }
-
-    function toggleDevMenu() {
-        const menu = document.getElementById('dev-menu');
-        menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
-
-    // New function to handle local file upload and display
-    function handleFileUpload(inputElement) {
-        const files = inputElement.files;
-        const category = inputElement.getAttribute('data-category'); // 'models', 'scripts', or 'ui'
-        const galleryId = `${category}-gallery`;
-        const galleryElement = document.getElementById(galleryId);
-
-        if (files.length > 0) {
-            alert(`SUCCESS: Added ${files.length} items to the ${category.toUpperCase()} gallery.\n\nNOTE: These files are ONLY visible locally in your browser. They are NOT saved permanently and will disappear if you refresh the page or close the browser.`);
-            
-            // Loop through selected files
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const fileURL = e.target.result;
-                    const isVideo = file.type.startsWith('video/');
-                    
-                    const wrapper = document.createElement("div");
-                    wrapper.classList.add("img-protect");
-                    wrapper.onclick = () => openViewer(fileURL, isVideo ? 'video' : 'image');
-
-                    let mediaElement;
-                    if (isVideo) {
-                        mediaElement = document.createElement("video");
-                        mediaElement.muted = true;
-                        mediaElement.playsInline = true;
-                        mediaElement.preload = "metadata";
-                        mediaElement.removeAttribute("controls");
-                    } else {
-                        mediaElement = document.createElement("img");
-                    }
-                    
-                    mediaElement.src = fileURL;
-                    mediaElement.classList.add("uploaded-item");
-                    wrapper.appendChild(mediaElement);
-                    
-                    // Add the new item to the correct gallery
-                    galleryElement.appendChild(wrapper);
-                };
-                reader.readAsDataURL(file); // Read the file as a data URL for local display
-            });
-            
-            // Show the relevant content box if it's currently hidden
-            showContent(`${category}-content`);
-        }
-        
-        // Reset the input field so the change event fires even if the same file is selected again
-        inputElement.value = '';
-        toggleDevMenu(); // Close the dropdown after selecting files
-    }
-
-
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('dragstart', e => e.preventDefault());
-
-    function showContent(id) {
-      const intro = document.getElementById('intro-box');
-      intro.style.display = 'none';
-
-      document.querySelectorAll('.content-box').forEach(box => {
-        box.style.display = 'none';
-        box.classList.remove('animate-pop');
-      });
-
-      const activeBox = document.getElementById(id);
-      activeBox.style.display = 'block';
-      setTimeout(() => activeBox.classList.add('animate-pop'), 10);
-      
-      if(window.innerWidth < 900) {
-        activeBox.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function closeContent(id) {
-      const box = document.getElementById(id);
-      box.style.display = 'none';
-      box.classList.remove('animate-pop');
-
-      const intro = document.getElementById('intro-box');
-      intro.style.display = 'block';
-      intro.style.animation = 'none';
-      intro.offsetHeight;
-      intro.style.animation = 'popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-    }
-
-    function openViewer(src, type) {
-      const viewer = document.getElementById("image-viewer");
-      const inner = document.getElementById("viewer-inner");
-      inner.innerHTML = "";
-      
-      const isVideo = type === "video";
-      
-      if (isVideo) {
-        const v = document.createElement("video");
-        v.src = src;
-        v.controls = true;
-        v.autoplay = true;
-        v.playsInline = true;
-        v.muted = false;
-        v.setAttribute("controlsList", "nodownload noremoteplayback");
-        inner.appendChild(v);
-        v.focus();
-      } else {
-        const i = document.createElement("img");
-        i.src = src;
-        inner.appendChild(i);
-      }
-      viewer.style.display = "flex";
-      viewer.setAttribute("aria-hidden", "false");
-      setTimeout(() => viewer.focus(), 50);
-    }
-
-    function closeViewer() {
-      const viewer = document.getElementById("image-viewer");
-      const inner = document.getElementById("viewer-inner");
-      viewer.style.display = "none";
-      viewer.setAttribute("aria-hidden", "true");
-      inner.innerHTML = "";
-    }
-
-    document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape") {
-        closeViewer();
-        document.getElementById('password-modal').style.display = 'none';
-      }
-    });
-
-    document.getElementById("image-viewer").addEventListener("click", function(e) {
-      if (e.target === this) closeViewer();
-    });
-
-    document.getElementById("password-modal").addEventListener("click", function(e) {
-        if (e.target === this) {
-            document.getElementById('password-modal').style.display = 'none';
-        }
-    });
-
-    async function loadGallery(jsonFile, galleryId) {
-      try {
-        const response = await fetch(jsonFile);
-        const files = await response.json();
-        const gallery = document.getElementById(galleryId);
-        gallery.innerHTML = ''; 
-
-        files.forEach(file => {
-          const wrapper = document.createElement("div");
-          wrapper.classList.add("img-protect");
-          const isVideo = file.type === "video";
-          wrapper.onclick = () => openViewer(file.path, file.type);
-
-          let mediaElement;
-          if (isVideo) {
-            mediaElement = document.createElement("video");
-            mediaElement.muted = true;
-            mediaElement.playsInline = true;
-            mediaElement.preload = "metadata";
-            mediaElement.removeAttribute("controls");
-          } else {
-            mediaElement = document.createElement("img");
-          }
-          
-          mediaElement.src = file.path;
-          mediaElement.classList.add("uploaded-item");
-          wrapper.appendChild(mediaElement);
-
-          gallery.appendChild(wrapper);
-        });
-      } catch (err) {
-        console.error("Failed to load gallery:", galleryId, err);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadGallery('models.json', 'models-gallery');
-      loadGallery('scripts.json', 'scripts-gallery');
-      loadGallery('uiFiles.json', 'ui-gallery');
-
-      const modeToggle = document.getElementById('modeToggle');
-      const modelsButton = document.getElementById('models-button').querySelector('img');
-      const scriptsButton = document.getElementById('scripts-button').querySelector('img');
-      const uiButton = document.getElementById('ui-button').querySelector('img');
-
-      modeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('light-mode');
-        const isLightMode = document.body.classList.contains('light-mode');
-        modeToggle.textContent = isLightMode ? 'Dark Mode' : 'Light Mode';
-        
-        const suffix = isLightMode ? 'light' : '';
-        uiButton.src = `UIDesigns/myuis${suffix}.png`;
-        scriptsButton.src = `Scripts/myscripts${suffix}.png`;
-        modelsButton.src = `Models/modelbutton${suffix}.png`; 
-      });
-
-      setTimeout(() => {
-        const loader = document.getElementById('loader');
-        loader.style.opacity = '0';
-        setTimeout(() => loader.remove(), 500);
-      }, 2500);
-    });
-  </script>
+setTimeout(()=>{
+document.getElementById('loader').style.opacity='0'
+setTimeout(()=>document.getElementById('loader').remove(),400)
+},1200)
+</script>
 </body>
 </html>
