@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>saywrego</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      background-color: #030709;
+      color: #036c5f;
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    body.loaded {
+      background-image: linear-gradient(rgba(3, 7, 9, 0.6), rgba(3, 7, 9, 0.6));
+      background-repeat: no-repeat;
+      background-position: 100% center; 
+      background-size: auto auto;
+    }
+
+    .intro-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #030709;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .intro-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-container {
+      position: relative;
+      display: inline-block;
+      padding: 20px 40px;
+    }
+
+    .intro-text {
+      font-size: 42px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #036c5f;
+      text-transform: lowercase;
+      position: relative;
+      z-index: 2;
+    }
+
+    .intro-text span.highlight {
+      position: relative;
+      display: inline-block;
+      color: #036c5f;
+      transition: color 0.1s ease 0.45s;
+    }
+
+    .intro-container.animate .intro-text span.highlight {
+      color: #ffffff;
+    }
+
+    .intro-text span.highlight::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 0;
+      height: 110%;
+      background: #036c5f;
+      z-index: -1;
+      transition: width 0.35s cubic-bezier(0.65, 0, 0.35, 1) 0.4s;
+    }
+
+    .intro-container.animate .intro-text span.highlight::before {
+      width: 100%;
+    }
+
+    .intro-line-top, .intro-line-bottom {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: #036c5f;
+      transform: scaleX(0);
+      transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .intro-line-top {
+      top: 0;
+      transform-origin: left;
+      transition-delay: 0.1s;
+    }
+
+    .intro-line-bottom {
+      bottom: 0;
+      transform-origin: right;
+      transition-delay: 0.2s;
+    }
+
+    .intro-container.animate .intro-line-top,
+    .intro-container.animate .intro-line-bottom {
+      transform: scaleX(1);
+    }
+
+    .main-content {
+      opacity: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+    }
+
+    body.loaded .main-content {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .header {
+      text-align: center;
+      width: 100%;
+      background: #010304;
+      padding: 1.5rem 0;
+      border-bottom: 0.5px solid rgba(3,108,95,0.3);
+      margin-bottom: 3rem;
+    }
+
+    .site-title {
+      font-size: 28px;
+      font-weight: 500;
+      color: #036c5f;
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: row;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1000px;
+      align-items: flex-start;
+      padding: 0 1.5rem 3rem 1.5rem;
+    }
+
+    .btn-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 160px;
+      padding-top: 4px;
+    }
+
+    .port-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      background: #030709;
+      border: 0.5px solid rgba(3,108,95,0.35);
+      border-radius: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(3,108,95,0.7);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      letter-spacing: 0.04em;
+      text-align: left;
+      width: 100%;
+    }
+
+    .port-btn:hover, .port-btn.active {
+      background: rgba(3,108,95,0.08);
+      color: #036c5f;
+      border-color: #036c5f;
+    }
+
+    .port-btn img.btn-icon {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      opacity: 0.7;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    .port-btn:hover img.btn-icon,
+    .port-btn.active img.btn-icon {
+      opacity: 1;
+    }
+
+    .panel-area { 
+      flex: 1; 
+      min-width: 0;
+    }
+
+    .panel {
+      display: none;
+      border: 0.5px solid rgba(3,108,95,0.3);
+      border-radius: 12px;
+      background: #060e0d;
+      animation: slideIn 0.2s ease;
+      width: 100%;
+    }
+
+    .panel.visible { display: block; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-top {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 0.5px solid rgba(3,108,95,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: #036c5f;
+      letter-spacing: 0.06em;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(3,108,95,0.5);
+      font-size: 18px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+
+    .close-btn:hover { color: #036c5f; }
+
+    .panel-body { padding: 1.5rem; }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .project-card {
+      border: 0.5px solid rgba(3,108,95,0.25);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #030709;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .project-card:hover { border-color: rgba(3,108,95,0.6); }
+
+    .img-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+    }
+
+    .card-img, .card-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .watermark-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='25' viewBox='0 0 60 25'%3E%3Ctext x='50%25' y='50%25' font-family='monospace' font-size='7' fill='rgba(255,255,255,0.12)' text-anchor='middle' dominant-baseline='middle' transform='rotate(-15 30 12.5)'%3Esaywrego%3C/text%3E%3C/svg%3E");
+      background-repeat: repeat;
+      z-index: 2;
+    }
+
+    .card-img-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #0a1512;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-info { padding: 10px 12px; }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #036c5f;
+      letter-spacing: 0.04em;
+    }
+
+    .empty-note {
+      font-size: 12px;
+      color: rgba(3,108,95,0.4);
+      line-height: 1.7;
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 7, 9, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 9999;
+    }
+
+    .lightbox.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-wrapper {
+      position: relative;
+      max-width: 85vw;
+      max-height: 85vh;
+      border: 0.5px solid rgba(3,108,95,0.4);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #060e0d;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+
+    .lightbox-img, .lightbox-video {
+      display: block;
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(6, 14, 13, 0.7);
+      border: 0.5px solid rgba(3,108,95,0.3);
+      border-radius: 50%;
+      color: #036c5f;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+      z-index: 10001;
+    }
+
+    .lightbox-close:hover {
+      background: #036c5f;
+      color: #030709;
+    }
+
+    .video-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #010304;
+      padding: 10px 16px;
+      border-top: 0.5px solid rgba(3,108,95,0.3);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #036c5f;
+    }
+
+    .control-btn {
+      background: none;
+      border: none;
+      color: #036c5f;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      transition: color 0.15s;
+    }
+
+    .control-btn:hover {
+      color: rgba(3,108,95,1);
+    }
+
+    .video-seek {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(3,108,95,0.2);
+      height: 4px;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .video-seek::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #036c5f;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .video-seek::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .video-seek::-moz-range-thumb {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #036c5f;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .video-seek::-moz-range-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .time-display {
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="intro-screen" id="intro-screen">
+    <div class="intro-container" id="intro-container">
+      <div class="intro-line-top"></div>
+      <h1 class="intro-text">saywr<span class="highlight">ego</span></h1>
+      <div class="intro-line-bottom"></div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h1 class="site-title">saywrego</h1>
+    </div>
+
+    <div class="layout">
+      <div class="btn-col">
+        <button class="port-btn" id="btn-uis" onclick="toggle('uis', this)">
+          <i class="ti ti-layout-2" aria-hidden="true" style="font-size:14px;"></i>
+          My UIs
+        </button>
+        <button class="port-btn" id="btn-models" onclick="toggle('models', this)">
+          <i class="ti ti-cube" aria-hidden="true" style="font-size:14px;"></i>
+          My Models
+        </button>
+        <button class="port-btn" id="btn-scripts" onclick="toggle('scripts', this)">
+          <i class="ti ti-terminal-2" aria-hidden="true" style="font-size:14px;"></i>
+          My Scripts
+        </button>
+      </div>
+
+      <div class="panel-area">
+
+        <div class="panel" id="panel-uis">
+          <div class="panel-top">
+            <span class="panel-name">My UIs</span>
+            <button class="close-btn" onclick="closePanel('uis')" aria-label="Close"><i class="ti ti-x"></i></button>
+          </div>
+          <div class="panel-body" id="body-uis">
+            <p class="empty-note">No entries yet.</p>
+          </div>
+        </div>
+
+        <div class="panel" id="panel-models">
+          <div class="panel-top">
+            <span class="panel-name">My Models</span>
+            <button class="close-btn" onclick="closePanel('models')" aria-label="Close"><i class="ti ti-x"></i></button>
+          </div>
+          <div class="panel-body" id="body-models">
+            <p class="empty-note">No entries yet.</p>
+          </div>
+        </div>
+
+        <div class="panel" id="panel-scripts">
+          <div class="panel-top">
+            <span class="panel-name">My Scripts</span>
+            <button class="close-btn" onclick="closePanel('scripts')" aria-label="Close"><i class="ti ti-x"></i></button>
+          </div>
+          <div class="panel-body" id="body-scripts">
+            <p class="empty-note">No entries yet.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-wrapper" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="closeLightbox()"><i class="ti ti-x"></i></button>
+      <div id="lightbox-content" style="position: relative; display: flex; flex-direction: column; vertical-align: middle;">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+    }, false);
+
+    let current = null;
+    let activeVideo = null;
+    let cachedBgUrl = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('intro-container');
+      const introScreen = document.getElementById('intro-screen');
+      
+      setTimeout(() => {
+        container.classList.add('animate');
+      }, 150);
+
+      setTimeout(() => {
+        introScreen.classList.add('fade-out');
+        document.body.classList.add('loaded');
+        if (cachedBgUrl) {
+          document.body.style.backgroundImage = `linear-gradient(rgba(3, 7, 9, 0.6), rgba(3, 7, 9, 0.6)), url('${cachedBgUrl}')`;
+        }
+      }, 1750);
+    });
+
+    async function loadProjects() {
+      try {
+        const res = await fetch('projects.json');
+        if (!res.ok) throw new Error('projects.json not found — status ' + res.status);
+        const data = await res.json();
+
+        if (data.background) {
+          cachedBgUrl = data.background;
+          if (document.body.classList.contains('loaded')) {
+            document.body.style.backgroundImage = `linear-gradient(rgba(3, 7, 9, 0.6), rgba(3, 7, 9, 0.6)), url('${data.background}')`;
+          }
+        }
+
+        if (data.buttons) {
+          ['uis', 'models', 'scripts'].forEach(key => {
+            const btn = document.getElementById('btn-' + key);
+            if (btn && data.buttons[key]?.icon) {
+              const existing = btn.querySelector('i');
+              const img = document.createElement('img');
+              img.src = data.buttons[key].icon;
+              img.className = 'btn-icon';
+              img.alt = '';
+              if (existing) btn.replaceChild(img, existing);
+            }
+          });
+        }
+
+        ['uis', 'models', 'scripts'].forEach(key => {
+          const items = data[key] || [];
+          if (!items.length) return;
+          const body = document.getElementById('body-' + key);
+          const grid = document.createElement('div');
+          grid.className = 'projects-grid';
+          
+          items.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'project-card';
+            
+            if (p.image) {
+              card.onclick = () => openLightbox(p.image);
+            }
+            
+            let assetHtml = '';
+            if (p.image) {
+              const isVideo = p.image.toLowerCase().endsWith('.mp4');
+              if (isVideo) {
+                assetHtml = `
+                  <div class="img-container">
+                    <video class="card-video" src="${p.image}" autoplay loop muted playsinline></video>
+                    <div class="watermark-overlay"></div>
+                  </div>`;
+              } else {
+                assetHtml = `
+                  <div class="img-container">
+                    <img class="card-img" src="${p.image}" alt="${p.title}" />
+                    <div class="watermark-overlay"></div>
+                  </div>`;
+              }
+            } else {
+              assetHtml = `
+                <div class="img-container">
+                  <div class="card-img-placeholder"><i class="ti ti-photo" style="font-size:20px;color:rgba(3,108,95,0.3);"></i></div>
+                </div>`;
+            }
+                 
+            card.innerHTML = assetHtml + `
+              <div class="card-info">
+                <div class="card-title">${p.title}</div>
+              </div>`;
+              
+            grid.appendChild(card);
+          });
+          body.innerHTML = '';
+          body.appendChild(grid);
+        });
+
+      } catch(e) {
+        console.warn('Could not load projects.json:', e.message);
+      }
+    }
+
+    loadProjects();
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "0:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return mins + ":" + (secs < 10 ? "0" : "") + secs;
+    }
+
+    function openLightbox(src) {
+      const lb = document.getElementById('lightbox');
+      const container = document.getElementById('lightbox-content');
+      container.innerHTML = '';
+
+      const isVideo = src.toLowerCase().endsWith('.mp4');
+
+      if (isVideo) {
+        const video = document.createElement('video');
+        video.className = 'lightbox-video';
+        video.src = src;
+        video.autoplay = true;
+        video.loop = true;
+        video.controls = false;
+        video.setAttribute('playsinline', '');
+        activeVideo = video;
+
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'relative';
+        wrapper.appendChild(video);
+
+        const watermark = document.createElement('div');
+        watermark.className = 'watermark-overlay';
+        wrapper.appendChild(watermark);
+
+        const controls = document.createElement('div');
+        controls.className = 'video-controls';
+
+        const playBtn = document.createElement('button');
+        playBtn.className = 'control-btn';
+        playBtn.innerHTML = '<i class="ti ti-pause"></i>';
+
+        const muteBtn = document.createElement('button');
+        muteBtn.className = 'control-btn';
+        muteBtn.innerHTML = '<i class="ti ti-volume-3"></i>';
+
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.className = 'video-seek';
+        slider.value = 0;
+        slider.max = 100;
+
+        const timeText = document.createElement('span');
+        timeText.className = 'time-display';
+        timeText.textContent = '0:00 / 0:00';
+
+        playBtn.onclick = () => {
+          if (video.paused) {
+            video.play();
+            playBtn.innerHTML = '<i class="ti ti-pause"></i>';
+          } else {
+            video.focus();
+            video.pause();
+            playBtn.innerHTML = '<i class="ti ti-play"></i>';
+          }
+        };
+
+        muteBtn.onclick = () => {
+          video.muted = !video.muted;
+          muteBtn.innerHTML = video.muted ? '<i class="ti ti-volume-3"></i>' : '<i class="ti ti-volume"></i>';
+        };
+
+        video.ontimeupdate = () => {
+          if (!isNaN(video.duration) && video.duration > 0) {
+            slider.value = (video.currentTime / video.duration) * 100;
+            timeText.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+          }
+        };
+
+        video.onloadedmetadata = () => {
+          timeText.textContent = '0:00 / ' + formatTime(video.duration);
+        };
+
+        slider.oninput = () => {
+          if (!isNaN(video.duration)) {
+            video.currentTime = (slider.value / 100) * video.duration;
+          }
+        };
+
+        controls.appendChild(playBtn);
+        controls.appendChild(muteBtn);
+        controls.appendChild(slider);
+        controls.appendChild(timeText);
+
+        container.appendChild(wrapper);
+        container.appendChild(controls);
+      } else {
+        const img = document.createElement('img');
+        img.className = 'lightbox-img';
+        img.src = src;
+        img.alt = 'Zoomed view';
+
+        const watermark = document.createElement('div');
+        watermark.className = 'watermark-overlay';
+
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'relative';
+        wrapper.appendChild(img);
+        wrapper.appendChild(watermark);
+
+        container.appendChild(wrapper);
+      }
+
+      lb.classList.add('active');
+    }
+
+    function closeLightbox() {
+      const lb = document.getElementById('lightbox');
+      lb.classList.remove('active');
+      if (activeVideo) {
+        activeVideo.pause();
+        activeVideo = null;
+      }
+      document.getElementById('lightbox-content').innerHTML = '';
+    }
+
+    function toggle(id, btn) {
+      const panel = document.getElementById('panel-' + id);
+      const allPanels = document.querySelectorAll('.panel');
+      const allBtns = document.querySelectorAll('.port-btn');
+      if (current === id) {
+        panel.classList.remove('visible');
+        btn.classList.remove('active');
+        current = null;
+        return;
+      }
+      allPanels.forEach(p => p.classList.remove('visible'));
+      allBtns.forEach(b => b.classList.remove('active'));
+      panel.classList.add('visible');
+      btn.classList.add('active');
+      current = id;
+    }
+
+    function closePanel(id) {
+      document.getElementById('panel-' + id).classList.remove('visible');
+      document.querySelectorAll('.port-btn').forEach(b => b.classList.remove('active'));
+      current = null;
+    }
+  </script>
+</body>
+</html>

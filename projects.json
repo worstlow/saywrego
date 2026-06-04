@@ -1,0 +1,38 @@
+{
+  "background": "images/Background.png",
+  "buttons": {
+    "uis":     { "icon": "images/ui.png" },
+    "models":  { "icon": "images/model.png" },
+    "scripts": { "icon": "images/coding.png" }
+  },
+  "uis": [
+    {
+      "title": "Player Bar",
+      "image": "images/ui/hp.png"
+    },
+     {
+      "title": "Skill Layout",
+      "image": "images/ui/layout.png"
+    },
+     {
+      "title": "Ult Bar",
+      "image": "images/ui/bar.png"
+    }
+  ],
+  "models": [
+    {
+      "title": "The World",
+      "image": "images/model/theworld.png"
+    },
+     {
+      "title": "Star Platinum",
+      "image": "images/model/starplat.png"
+    }
+  ],
+  "scripts": [
+    {
+      "title": "Stand Combat + Skills",
+      "image": "images/code/combat.mp4"
+    }
+  ]
+}
